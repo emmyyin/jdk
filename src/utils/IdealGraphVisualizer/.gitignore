@@ -1,2 +1,6 @@
 /*/target
 .igv.log
+*.dat
+localeVariants
+lastModified
+.gitignore
