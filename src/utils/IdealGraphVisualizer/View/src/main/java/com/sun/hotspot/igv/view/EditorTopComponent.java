@@ -286,7 +286,7 @@ public final class EditorTopComponent extends TopComponent implements TopCompone
     public void doSomethingRandom() {
         Set<Integer> initialSelection = getModel().getSelectedNodes();
         Set<Integer> initialHidden = getModel().getHiddenNodes();
-        ensureDynamicSeaMode();
+        // ensureDynamicSeaMode();
         Set<Pair<RandomAction, Integer>> profile = new HashSet<>();
         profile.add(new Pair<>(RandomAction.SHOW_PREV, 10));
         profile.add(new Pair<>(RandomAction.SHOW_NEXT, 10));
@@ -307,12 +307,15 @@ public final class EditorTopComponent extends TopComponent implements TopCompone
             System.out.println();
             break;
         case RELAYOUT:
-            enableSeaLayoutAction.setSelected(true);
-            getModel().setShowSea(true);
-            getModel().setShowStableSea(false);
-            enableNewLayoutAction.setSelected(true);
-            getModel().setShowSea(false);
-            getModel().setShowStableSea(true);
+            // Only do relayout if the stable sea layout is being tested
+            if (getModel().getShowStableSea()) {
+                enableSeaLayoutAction.setSelected(true);
+                getModel().setShowSea(true);
+                getModel().setShowStableSea(false);
+                enableNewLayoutAction.setSelected(true);
+                getModel().setShowSea(false);
+                getModel().setShowStableSea(true);
+            }
             System.out.println();
             break;
         case EXTRACT_NODE:
