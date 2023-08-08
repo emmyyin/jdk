@@ -759,6 +759,8 @@ public class HierarchicalStableLayoutManager {
         /**
          * Insert node at the assigned layer, updating the positions of the nodes within
          * the layer
+         * 
+         * TODO: What if the layer is null? E.g. there are no nodes/layers at all
          *
          * @param node
          * @param layer
@@ -907,6 +909,7 @@ public class HierarchicalStableLayoutManager {
 
         private void moveNodeUp(LayoutNode node) {
             assert canMoveNodeUp(node);
+            System.out.println("moving " + node + " up to layer " + (node.layer - 1));
 
             List<LayoutEdge> previousPredEdges = List.copyOf(node.preds);
             for (LayoutEdge edge : previousPredEdges) {
@@ -934,6 +937,7 @@ public class HierarchicalStableLayoutManager {
 
         private void moveNodeDown(LayoutNode node) {
             assert canMoveNodeDown(node);
+            System.out.println("moving " + node + " down to layer " + (node.layer + 1));
 
             List<LayoutEdge> previousSuccEdges = List.copyOf(node.succs);
             for (LayoutEdge edge : previousSuccEdges) {
@@ -979,6 +983,8 @@ public class HierarchicalStableLayoutManager {
          * @param node
          */
         private void expandNewLayerBeneath(LayoutNode node) {
+            System.out.println();
+            System.out.println("EXPANDING NEW LAYER " + (node.layer + 1) + " for " + node);
             sanityCheckEdges();
             sanityCheckNodesAndLayerNodes();
             int layer = node.layer + 1;
@@ -1005,9 +1011,11 @@ public class HierarchicalStableLayoutManager {
 
             // Add dummy nodes for edges going across new layer. One for each port on the
             // nodes that has outgoing edges
+            System.out.println("Fixing edges going across layer " + layer);
             List<LayoutNode> predLayer = List.copyOf(layers.get(layer - 1));
             for (LayoutNode n : predLayer) {
                 HashMap<Integer, List<LayoutEdge>> portHashes = new HashMap<>();
+                System.out.println("from " + n + " on layer " + n.layer + ", total " + n.succs.size() + " edges");
 
                 for (LayoutEdge e : n.succs) {
                     if (!portHashes.keySet().contains(e.relativeFrom)) {
@@ -1018,6 +1026,7 @@ public class HierarchicalStableLayoutManager {
 
                 for (Integer i : portHashes.keySet()) {
                     List<LayoutEdge> edges = portHashes.get(i);
+                    System.out.println("port hash: " + i + ", with " + edges.size() + " edges");
 
                     LayoutNode dummy = new LayoutNode();
                     dummy.width = DUMMY_WIDTH;
@@ -1037,6 +1046,7 @@ public class HierarchicalStableLayoutManager {
                         e.relativeFrom = dummy.width / 2;
                         n.succs.remove(e);
                         dummy.succs.add(e);
+                        System.out.println("to " + e.to + " on layer " + e.to.layer);
                         assert e.to.layer == layer + 1;
                     }
 
@@ -1051,6 +1061,7 @@ public class HierarchicalStableLayoutManager {
 
             sanityCheckNodesAndLayerNodes();
             sanityCheckEdges();
+            System.out.println("FINISHED --- EXPANDING NEW LAYER " + node.layer + " for " + node);
         }
 
         private void applyAddLinkAction(Link l) {
@@ -1354,7 +1365,7 @@ public class HierarchicalStableLayoutManager {
 
         private void applyRemoveVertexAction(VertexAction action) {
             LayoutNode node = vertexToLayoutNode.get(action.vertex);
-            // System.out.println("Removing " + node);
+            System.out.println("Removing " + node);
 
             assert nodes.contains(node);
 
