@@ -184,6 +184,10 @@ public class HierarchicalStableLayoutManager {
                 assert e.from.equals(n);
                 if (nodes.contains(e.to)) {
                     assert e.to.preds.contains(e);
+                    if (!layers.get(n.layer + 1).contains(e.to)) {
+                        System.out.println("checking succ edges from " + n + ", on layer " + n.layer);
+                        System.out.println("can't find " + e.to + " on layer " + (n.layer + 1) + ", assigned layer " + e.to.layer);
+                    }
                     assert layers.get(n.layer + 1).contains(e.to);
                     assert e.to.layer == n.layer + 1;
                 } else {
@@ -193,6 +197,11 @@ public class HierarchicalStableLayoutManager {
             for (LayoutEdge e : List.copyOf(n.preds)) {
                 assert e.to.equals(n);
                 if (nodes.contains(e.from)) {
+                    if (!layers.get(n.layer - 1).contains(e.from)) {
+                        System.out.println("checking pred edges to " + n + ", on layer " + n.layer);
+                        System.out.println("can't find " + e.from + " on layer " + (n.layer - 1) + ", assigned layer "
+                                + e.from.layer);
+                    }
                     assert e.from.succs.contains(e);
                     assert layers.get(n.layer - 1).contains(e.from);
                     assert e.from.layer == n.layer - 1;
@@ -1331,6 +1340,7 @@ public class HierarchicalStableLayoutManager {
             }
 
             if (onlyDummiesLeft && shouldRemoveEmptyLayers) {
+                System.out.println("removing layer " + layer);
                 layers.remove(layer);
                 for (int i = layer + 1; i <= layers.size(); i++) {
                     List<LayoutNode> list = layers.get(i);
