@@ -759,8 +759,6 @@ public class HierarchicalStableLayoutManager {
         /**
          * Insert node at the assigned layer, updating the positions of the nodes within
          * the layer
-         * 
-         * TODO: What if the layer is null? E.g. there are no nodes/layers at all
          *
          * @param node
          * @param layer
